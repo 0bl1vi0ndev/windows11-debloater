@@ -1,0 +1,57 @@
+# Windows 11 Debloater
+# Supprime uniquement les bloatwares inoffensifs
+# À exécuter en PowerShell Administrateur
+
+Write-Host "Début du débloatage SAFE de Windows 11..." -ForegroundColor Cyan
+
+$Bloatware = @(
+    # Applications préinstallées inutiles
+    "Microsoft.BingWeather"              # Météo
+    "Microsoft.GetHelp"                  # Aide
+    "Microsoft.Getstarted"               # Conseils
+    "Microsoft.MicrosoftOfficeHub"       # Office Hub
+    "Microsoft.MicrosoftSolitaireCollection" # Solitaire
+    "Microsoft.MixedReality.Portal"      # Réalité mixte
+    "Microsoft.People"                   # Contacts
+    "Microsoft.SkypeApp"                 # Skype
+    "Microsoft.Wallet"                   # Portefeuille
+    "Microsoft.WindowsAlarms"            # Horloge 
+    "Microsoft.WindowsCommunicationsApps" # Mail + Calendrier 
+    "Microsoft.WindowsFeedbackHub"       # Hub de commentaires
+    "Microsoft.WindowsMaps"              # Cartes
+    "Microsoft.XboxGamingOverlay"        # Xbox Game Bar overlay
+    "Microsoft.Xbox.TCUI"                # Xbox TCUI
+    "Microsoft.XboxSpeechToTextOverlay"  # Xbox speech
+    "Microsoft.ZuneMusic"                # Groove Musique
+    "Microsoft.ZuneVideo"                # Films & TV 
+    "Microsoft.Todos"                    # Microsoft To Do
+    "Microsoft.PowerAutomateDesktop"     # Power Automate
+    "Microsoft.BingNews"                 # Actualités
+    "Microsoft.GamingApp"                # Xbox App )
+    "Clipchamp.Clipchamp"                # Clipchamp
+    "Microsoft.YourPhone"                # Votre Téléphone / Phone Link
+    "MicrosoftTeams"                     # Teams personnel 
+    "*Disney*"                           # Disney+
+    "*Spotify*"                          # Spotify préinstallé
+    "*Facebook*"                         # Facebook
+    "*Instagram*"                        # Instagram
+    "*Twitter*"                          # Twitter
+    "*Netflix*"                          # Netflix
+    "*TikTok*"                           # TikTok si il est présent
+    "Microsoft.WindowsSoundRecorder"     # Magnétophone 
+)
+
+foreach ($app in $Bloatware) {
+    Write-Host "Suppression de $app ..."
+    Get-AppxPackage -Name $app -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue
+    Get-AppxProvisionedPackage -Online | Where-Object {$_.DisplayName -like $app} | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue
+}
+
+# ces commandes la servent a enlever les pubs
+Write-Host "Désactivation des pubs et suggestions..."
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "SubscribedContent-338388Enabled" /t REG_DWORD /d 0 /f
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "SystemPaneSuggestionsEnabled" /t REG_DWORD /d 0 /f
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "SubscribedContent-338389Enabled" /t REG_DWORD /d 0 /f
+
+Write-Host "Terminé ! Redémarre ton PC pour que tout soit propre." -ForegroundColor Green
+Write-Host "Tout ce qui est utile (Edge, Store, Photos, Sécurité Windows, etc.) est toujours là." -ForegroundColor Yellow
